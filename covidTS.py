@@ -4,10 +4,6 @@ from matplotlib import pyplot as plt
 import struct
 import time
 
-from PIL import Image
-
-font = cv.FONT_HERSHEY_COMPLEX
-
 #=====================================================================
 #Code outline for camera
 #=====================================================================
@@ -51,7 +47,7 @@ while(flag):
 #=====================================================================
     #Our Code here i believe
 #=====================================================================
-	#color_frame = cv.cvtColor(frame, cv.COLOR_BGR2BGRA)
+	color_frame = cv.cvtColor(frame, cv.COLOR_BGR2BGRA)
 	gray_frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 	ret,thresh1 = cv.threshold(gray_frame,210,255,cv.THRESH_BINARY) #used for the Contour map
 
@@ -72,7 +68,7 @@ while(flag):
 
 		#Only draws contours for large areas, to help prevent taking wrong temperature
 		if area > 800:
-			cv.drawContours(gray_frame, [approx], 0, (0, 0, 255), 5)
+			cv.drawContours(color_frame, [approx], 0, (0, 0, 255), 5)
 
 			mask = np.zeros(thresh1.shape,np.uint8)
 			cv.drawContours(mask,[cnt],0,255,-1)
@@ -92,7 +88,7 @@ while(flag):
 		cv.destroyAllWindows()  
 
 	# Showing the Final image.
-	cv.imshow('ROI', gray_frame)
+	cv.imshow('ROI', color_frame)
   
 	# Exiting the window if 'q' is pressed on the keyboard. 
 	if cv.waitKey(1) & 0xFF == ord('q'):  
@@ -104,7 +100,7 @@ while(flag):
 #=====================================================================
 
 	# Display the resulting frame
-	cv.imshow('Thermal Camera - Press Q to quit', gray_frame)
+	#cv.imshow('Thermal Camera - Press Q to quit', gray_frame)
  
 	cam.set(cv.CAP_PROP_CONVERT_RGB, 0)
 	ret, frame = cam.read()
@@ -113,12 +109,12 @@ while(flag):
 		time.sleep(0.1)
 		continue
 	print("Temp calculation (experimental): ", end="" )
-	print(struct.unpack("h", frame[320][0][0:2])[0])
+	print(struct.unpack("h", frame[320][0][0:2])[0]/10)
 	cam.set(cv.CAP_PROP_CONVERT_RGB, 1)
 #=====================================================================
     
-	if cv.waitKey(1) & 0xFF == ord('q'):
-		break
+	#if cv.waitKey(1) & 0xFF == ord('q'):
+	#	break
  
 	#yuvframe = cv.cvtColor(frame, cv.COLOR_RGB2YUV)
 	#print(yuvframe[-1][0:3])
